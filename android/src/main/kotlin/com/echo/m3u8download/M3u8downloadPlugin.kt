@@ -1,5 +1,6 @@
 package com.echo.m3u8download
 
+import android.view.View
 import androidx.annotation.NonNull
 import com.google.gson.Gson
 import io.flutter.embedding.engine.plugins.FlutterPlugin
@@ -48,7 +49,7 @@ public class M3u8downloadPlugin : FlutterPlugin, MethodCallHandler {
 
                 override fun onCancel(arguments: Any?) {
                     theEvents = null
-                }
+                 }
             })
         }
 

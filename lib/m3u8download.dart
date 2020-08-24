@@ -28,13 +28,41 @@ class M3u8download {
 
   static eventChannelDistribution() {
     Map<String, ValueChanged<M3U8Task>> map = {
-      "onDownloadPause": null,
-      "onDownloadError": null,
-      "onDownloadPrepare": null,
-      "onDownloadItem": null,
-      "onDownloadSuccess": null,
-      "onDownloadPending": null,
-      "onDownloadProgress": null,
+      "onDownloadPause": (s) => {
+            listeners.forEach((element) {
+              element.onDownloadPause(s);
+            })
+          },
+      "onDownloadError": (s) => {
+            listeners.forEach((element) {
+              element.onDownloadError(s);
+            })
+          },
+      "onDownloadPrepare": (s) => {
+            listeners.forEach((element) {
+              element.onDownloadPrepare(s);
+            })
+          },
+      "onDownloadItem": (s) => {
+            listeners.forEach((element) {
+              element.onDownloadItem(s);
+            })
+          },
+      "onDownloadSuccess": (s) => {
+            listeners.forEach((element) {
+              element.onDownloadSuccess(s);
+            })
+          },
+      "onDownloadPending": (s) => {
+            listeners.forEach((element) {
+              element.onDownloadPending(s);
+            })
+          },
+      "onDownloadProgress": (s) => {
+            listeners.forEach((element) {
+              element.onDownloadProgress(s);
+            })
+          },
     };
 
     _eventChannel.receiveBroadcastStream().listen((data) {
@@ -42,4 +70,33 @@ class M3u8download {
       map[data["type"]]?.call(M3U8Task.fromJson(data["data"]));
     });
   }
+
+  static List<M3u8downloadListener> listeners = [];
+
+  static addM3u8downloadListener(M3u8downloadListener listener) {
+    if (listeners.contains(listener)) {
+      return;
+    }
+    listeners.add(listener);
+  }
+
+  static bool removeM3u8downloadListener(M3u8downloadListener listener) {
+    return listeners.remove(listener);
+  }
+}
+
+abstract class M3u8downloadListener {
+  onDownloadPause(M3U8Task m3u8task);
+
+  onDownloadError(M3U8Task m3u8task);
+
+  onDownloadPrepare(M3U8Task m3u8task);
+
+  onDownloadItem(M3U8Task m3u8task);
+
+  onDownloadSuccess(M3U8Task m3u8task);
+
+  onDownloadPending(M3U8Task m3u8task);
+
+  onDownloadProgress(M3U8Task m3u8task);
 }

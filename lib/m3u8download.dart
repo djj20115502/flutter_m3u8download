@@ -83,6 +83,45 @@ class M3u8download {
   static bool removeM3u8downloadListener(M3u8downloadListener listener) {
     return listeners.remove(listener);
   }
+
+  static cancel(String url) {
+    _channel.invokeMethod('cancel', url);
+  }
+
+  static download(String url) {
+    _channel.invokeMethod('download', url);
+  }
+
+  static pause(String url) {
+    _channel.invokeMethod('pause', url);
+  }
+
+  static getM3U8Path(String url) {
+    _channel.invokeMethod('getM3U8Path', url);
+  }
+
+  static checkM3U8IsExist(String url) {
+    _channel.invokeMethod('checkM3U8IsExist', url);
+  }
+
+  static Future<bool> isCurrentTask(String url) async {
+    final bool isCurrentTask =
+        await _channel.invokeMethod('isCurrentTask', url);
+    return isCurrentTask;
+  }
+
+  static setEncryptKey(String encryptKey) {
+    _channel.invokeMethod('setEncryptKey', encryptKey);
+  }
+
+  static Future<String> getEncryptKey() async {
+    final String encryptKey = await _channel.invokeMethod('getEncryptKey');
+    return encryptKey;
+  }
+
+  static cancelAndDelete(String encryptKey) {
+    _channel.invokeMethod('cancelAndDelete', encryptKey);
+  }
 }
 
 abstract class M3u8downloadListener {

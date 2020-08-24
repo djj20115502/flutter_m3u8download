@@ -1,6 +1,5 @@
 package com.echo.m3u8download
 
-import android.view.View
 import androidx.annotation.NonNull
 import com.google.gson.Gson
 import io.flutter.embedding.engine.plugins.FlutterPlugin
@@ -11,6 +10,7 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.PluginRegistry.Registrar
 import jaygoo.library.m3u8downloader.M3U8Downloader
+import jaygoo.library.m3u8downloader.M3U8DownloaderConfig
 import jaygoo.library.m3u8downloader.OnM3U8DownloadListener
 import jaygoo.library.m3u8downloader.bean.M3U8Task
 import m3u8download.MyM3u8
@@ -49,8 +49,69 @@ public class M3u8downloadPlugin : FlutterPlugin, MethodCallHandler {
 
                 override fun onCancel(arguments: Any?) {
                     theEvents = null
-                 }
+                }
             })
+            var dirPath = StorageUtils.getCacheDirectory(registrar.context()).path.toString() + "/m3u8Downloader"
+            System.out.println("registerWith")
+            M3U8DownloaderConfig
+                    .build(registrar.context().applicationContext)
+                    .setSaveDir(dirPath)
+                    .setDebugMode(true)
+            M3U8Downloader.getInstance().setOnM3U8DownloadListener(object : OnM3U8DownloadListener() {
+                override fun onDownloadPause(task: M3U8Task?) {
+                    super.onDownloadPause(task)
+                    theEvents?.success(buildResult("onDownloadPause", task))
+                }
+
+                override fun onDownloadError(task: M3U8Task?, errorMsg: Throwable?) {
+                    super.onDownloadError(task, errorMsg)
+                    theEvents?.success(buildResult("onDownloadError", task))
+                }
+
+                override fun onDownloadPrepare(task: M3U8Task?) {
+                    super.onDownloadPrepare(task)
+                    theEvents?.success(buildResult("onDownloadPrepare", task))
+                }
+
+                override fun onDownloadItem(task: M3U8Task?, itemFileSize: Long, totalTs: Int, curTs: Int) {
+                    super.onDownloadItem(task, itemFileSize, totalTs, curTs)
+                    var my = MyM3u8.build(task)
+                    my.itemFileSize = itemFileSize.toString()
+                    my.totalTs = totalTs.toString()
+                    my.curTs = curTs.toString()
+                    theEvents?.success(buildResult("onDownloadItem", Gson().toJson(my)))
+                }
+
+                override fun onDownloadSuccess(task: M3U8Task?) {
+                    super.onDownloadSuccess(task)
+                    theEvents?.success(buildResult("onDownloadSuccess", task))
+                }
+
+                override fun onDownloadPending(task: M3U8Task?) {
+                    super.onDownloadPending(task)
+                    theEvents?.success(buildResult("onDownloadPending", task))
+                }
+
+                override fun onDownloadProgress(task: M3U8Task?) {
+                    super.onDownloadProgress(task)
+                    theEvents?.success(buildResult("onDownloadProgress", task))
+                }
+            })
+
+
+        }
+
+        fun buildResult(type: String, data: Any?): Map<String, Any> {
+            val map = mutableMapOf<String, Any>()
+            map["type"] = type
+            data?.run {
+                if (data is M3U8Task) {
+                    map["data"] = MyM3u8.buildGson(data as M3U8Task)
+                } else {
+                    map["data"] = this
+                }
+            }
+            return map
         }
 
         var theEvents: EventChannel.EventSink? = null
@@ -59,13 +120,14 @@ public class M3u8downloadPlugin : FlutterPlugin, MethodCallHandler {
 
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
         if (call.method == "getPlatformVersion") {
-            result.success("Android ${android.os.Build.VERSION.RELEASE}")
+//            result.success("Android ${android.os.Build.VERSION.RELEASE}")
+            result.success("Aaaandroid ${android.os.Build.VERSION.RELEASE}")
         }
-
         when (call.method) {
             "cancel" -> {
                 M3U8Downloader.getInstance().cancel(call.argument<String>("url"))
             }
+
             "download" -> {
                 M3U8Downloader.getInstance().download(call.argument<String>("url"))
             }
@@ -79,7 +141,7 @@ public class M3u8downloadPlugin : FlutterPlugin, MethodCallHandler {
                 M3U8Downloader.getInstance().getM3U8Path(call.argument<String>("url"))
             }
             "isCurrentTask" -> {
-                M3U8Downloader.getInstance().isCurrentTask(call.argument<String>("url"))
+                result.success(M3U8Downloader.getInstance().isCurrentTask(call.argument<String>("url")))
             }
             "setEncryptKey" -> {
                 M3U8Downloader.getInstance().encryptKey = call.argument<String>("encryptKey")
@@ -90,67 +152,10 @@ public class M3u8downloadPlugin : FlutterPlugin, MethodCallHandler {
             "cancelAndDelete" -> {
                 M3U8Downloader.getInstance().cancelAndDelete(call.argument<String>("url"), null)
             }
-            "setOnM3U8DownloadListener" -> {
-                M3U8Downloader.getInstance().setOnM3U8DownloadListener(object : OnM3U8DownloadListener() {
-                    override fun onDownloadPause(task: M3U8Task?) {
-                        super.onDownloadPause(task)
-                        theEvents?.success(buildResult("onDownloadPause", task))
-                    }
-
-                    override fun onDownloadError(task: M3U8Task?, errorMsg: Throwable?) {
-                        super.onDownloadError(task, errorMsg)
-                        theEvents?.success(buildResult("onDownloadError", task))
-                    }
-
-                    override fun onDownloadPrepare(task: M3U8Task?) {
-                        super.onDownloadPrepare(task)
-                        theEvents?.success(buildResult("onDownloadPrepare", task))
-                    }
-
-                    override fun onDownloadItem(task: M3U8Task?, itemFileSize: Long, totalTs: Int, curTs: Int) {
-                        super.onDownloadItem(task, itemFileSize, totalTs, curTs)
-                        var my = MyM3u8.build(task)
-                        my.itemFileSize = itemFileSize.toString()
-                        my.totalTs = totalTs.toString()
-                        my.curTs = curTs.toString()
-                        theEvents?.success(buildResult("onDownloadItem", Gson().toJson(my)))
-                    }
-
-                    override fun onDownloadSuccess(task: M3U8Task?) {
-                        super.onDownloadSuccess(task)
-                        theEvents?.success(buildResult("onDownloadSuccess", task))
-                    }
-
-                    override fun onDownloadPending(task: M3U8Task?) {
-                        super.onDownloadPending(task)
-                        theEvents?.success(buildResult("onDownloadPending", task))
-                    }
-
-                    override fun onDownloadProgress(task: M3U8Task?) {
-                        super.onDownloadProgress(task)
-                        theEvents?.success(buildResult("onDownloadProgress", task))
-                    }
-                })
-            }
-
         }
     }
 
     override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
         channel.setMethodCallHandler(null)
     }
-
-    fun buildResult(type: String, data: Any?): Map<String, Any> {
-        val map = mutableMapOf<String, Any>()
-        map["type"] = type
-        data?.run {
-            if (data is M3U8Task) {
-                map["data"] = MyM3u8.buildGson(data as M3U8Task)
-            } else {
-                map["data"] = this
-            }
-        }
-        return map
-    }
-
 }

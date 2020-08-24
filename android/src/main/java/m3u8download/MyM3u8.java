@@ -41,7 +41,9 @@ public class MyM3u8 {
         myM3u8.state = "" + m3U8Task.getState();
         myM3u8.speed = "" + m3U8Task.getSpeed();
         myM3u8.progress = "" + m3U8Task.getProgress();
-        myM3u8.m3u8FilePath = m3U8Task.getM3U8().getM3u8FilePath();
+        if (m3U8Task.getM3U8() != null) {
+            myM3u8.m3u8FilePath = m3U8Task.getM3U8().getM3u8FilePath();
+        }
         return myM3u8;
     }
 

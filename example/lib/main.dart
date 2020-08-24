@@ -56,7 +56,7 @@ class _MyAppState extends State<MyApp> {
               child: Text('Running on: $_platformVersion\n'),
               onTap: () => {
                     M3u8download.download(
-                        "http://vfx.mtime.cn/Video/2019/02/04/mp4/190204084208765161.mp4"),
+                        "http://ivi.bupt.edu.cn/hls/cctv1hd.m3u8"),
                   }),
         ),
       ),

@@ -85,33 +85,33 @@ class M3u8download {
   }
 
   static cancel(String url) {
-    _channel.invokeMethod('cancel', url);
+    _channel.invokeMethod('cancel', {"url": url });
   }
 
   static download(String url) {
-    _channel.invokeMethod('download', url);
+    _channel.invokeMethod('download', {"url": url });
   }
 
   static pause(String url) {
-    _channel.invokeMethod('pause', url);
+    _channel.invokeMethod('pause', {"url": url });
   }
 
   static getM3U8Path(String url) {
-    _channel.invokeMethod('getM3U8Path', url);
+    _channel.invokeMethod('getM3U8Path', {"url": url });
   }
 
   static checkM3U8IsExist(String url) {
-    _channel.invokeMethod('checkM3U8IsExist', url);
+    _channel.invokeMethod('checkM3U8IsExist', {"url": url });
   }
 
   static Future<bool> isCurrentTask(String url) async {
     final bool isCurrentTask =
-        await _channel.invokeMethod('isCurrentTask', url);
+        await _channel.invokeMethod('isCurrentTask', {"url": url });
     return isCurrentTask;
   }
 
   static setEncryptKey(String encryptKey) {
-    _channel.invokeMethod('setEncryptKey', encryptKey);
+    _channel.invokeMethod('setEncryptKey', {"encryptKey": encryptKey });
   }
 
   static Future<String> getEncryptKey() async {
@@ -119,8 +119,8 @@ class M3u8download {
     return encryptKey;
   }
 
-  static cancelAndDelete(String encryptKey) {
-    _channel.invokeMethod('cancelAndDelete', encryptKey);
+  static cancelAndDelete(String url) {
+    _channel.invokeMethod('cancelAndDelete', {"url": url });
   }
 }
 

@@ -1,5 +1,6 @@
 package com.echo.m3u8download
 
+import android.content.Context
 import androidx.annotation.NonNull
 import com.google.gson.Gson
 import io.flutter.embedding.engine.plugins.FlutterPlugin
@@ -25,7 +26,18 @@ public class M3u8downloadPlugin : FlutterPlugin, MethodCallHandler {
 
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         channel = MethodChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(), "m3u8download")
-        channel.setMethodCallHandler(this);
+        channel.setMethodCallHandler(this)
+        EventChannel(flutterPluginBinding.binaryMessenger, "m3u8download_event").setStreamHandler(object : EventChannel.StreamHandler {
+            override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
+                theEvents = events;
+
+            }
+
+            override fun onCancel(arguments: Any?) {
+                theEvents = null
+            }
+        })
+        init(flutterPluginBinding.applicationContext)
     }
 
     // This static function is optional and equivalent to onAttachedToEngine. It supports the old
@@ -40,6 +52,7 @@ public class M3u8downloadPlugin : FlutterPlugin, MethodCallHandler {
     companion object {
         @JvmStatic
         fun registerWith(registrar: Registrar) {
+
             val channel = MethodChannel(registrar.messenger(), "m3u8download")
             channel.setMethodCallHandler(M3u8downloadPlugin())
             EventChannel(registrar.messenger(), "m3u8download_event").setStreamHandler(object : EventChannel.StreamHandler {
@@ -51,10 +64,29 @@ public class M3u8downloadPlugin : FlutterPlugin, MethodCallHandler {
                     theEvents = null
                 }
             })
-            var dirPath = StorageUtils.getCacheDirectory(registrar.context()).path.toString() + "/m3u8Downloader"
-            System.out.println("registerWith")
+            init(registrar.context())
+
+        }
+
+        fun buildResult(type: String, data: Any?): Map<String, Any> {
+            val map = mutableMapOf<String, Any>()
+            map["type"] = type
+            data?.run {
+                if (data is M3U8Task) {
+                    map["data"] = MyM3u8.buildGson(data as M3U8Task)
+                } else {
+                    map["data"] = this
+                }
+            }
+            return map
+        }
+
+        var theEvents: EventChannel.EventSink? = null
+
+        fun init(context: Context){
+            var dirPath = StorageUtils.getCacheDirectory(context).path.toString() + "/m3u8Downloader"
             M3U8DownloaderConfig
-                    .build(registrar.context().applicationContext)
+                    .build(context.applicationContext)
                     .setSaveDir(dirPath)
                     .setDebugMode(true)
             M3U8Downloader.getInstance().setOnM3U8DownloadListener(object : OnM3U8DownloadListener() {
@@ -98,23 +130,7 @@ public class M3u8downloadPlugin : FlutterPlugin, MethodCallHandler {
                 }
             })
 
-
         }
-
-        fun buildResult(type: String, data: Any?): Map<String, Any> {
-            val map = mutableMapOf<String, Any>()
-            map["type"] = type
-            data?.run {
-                if (data is M3U8Task) {
-                    map["data"] = MyM3u8.buildGson(data as M3U8Task)
-                } else {
-                    map["data"] = this
-                }
-            }
-            return map
-        }
-
-        var theEvents: EventChannel.EventSink? = null
     }
 
 

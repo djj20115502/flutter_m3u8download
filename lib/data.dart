@@ -62,4 +62,9 @@ class M3U8Task {
     data['curTs'] = this.curTs;
     return data;
   }
+
+  @override
+  String toString() {
+    return 'M3U8Task{url: $url, state: $state, speed: $speed, progress: $progress, m3u8FilePath: $m3u8FilePath, itemFileSize: $itemFileSize, totalTs: $totalTs, curTs: $curTs}';
+  }
 }

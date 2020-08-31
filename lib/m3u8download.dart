@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
@@ -8,7 +9,7 @@ import 'data.dart';
 class M3u8download {
   static const MethodChannel _channel = const MethodChannel('m3u8download');
   static const EventChannel _eventChannel =
-      const EventChannel("m3u8download_event");
+  const EventChannel("m3u8download_event");
 
   static Future<String> get platformVersion async {
     final String version = await _channel.invokeMethod('getPlatformVersion');
@@ -28,46 +29,54 @@ class M3u8download {
 
   static eventChannelDistribution() {
     Map<String, ValueChanged<M3U8Task>> map = {
-      "onDownloadPause": (s) => {
-            listeners.forEach((element) {
-              element.onDownloadPause(s);
-            })
-          },
-      "onDownloadError": (s) => {
-            listeners.forEach((element) {
-              element.onDownloadError(s);
-            })
-          },
-      "onDownloadPrepare": (s) => {
-            listeners.forEach((element) {
-              element.onDownloadPrepare(s);
-            })
-          },
-      "onDownloadItem": (s) => {
-            listeners.forEach((element) {
-              element.onDownloadItem(s);
-            })
-          },
-      "onDownloadSuccess": (s) => {
-            listeners.forEach((element) {
-              element.onDownloadSuccess(s);
-            })
-          },
-      "onDownloadPending": (s) => {
-            listeners.forEach((element) {
-              element.onDownloadPending(s);
-            })
-          },
-      "onDownloadProgress": (s) => {
-            listeners.forEach((element) {
-              element.onDownloadProgress(s);
-            })
-          },
+      "onDownloadPause": (s) =>
+      {
+        listeners.forEach((element) {
+          element.onDownloadPause(s);
+        })
+      },
+      "onDownloadError": (s) =>
+      {
+        listeners.forEach((element) {
+          element.onDownloadError(s);
+        })
+      },
+      "onDownloadPrepare": (s) =>
+      {
+        listeners.forEach((element) {
+          element.onDownloadPrepare(s);
+        })
+      },
+      "onDownloadItem": (s) =>
+      {
+        listeners.forEach((element) {
+          element.onDownloadItem(s);
+        })
+      },
+      "onDownloadSuccess": (s) =>
+      {
+        listeners.forEach((element) {
+          element.onDownloadSuccess(s);
+        })
+      },
+      "onDownloadPending": (s) =>
+      {
+        listeners.forEach((element) {
+          element.onDownloadPending(s);
+        })
+      },
+      "onDownloadProgress": (s) =>
+      {
+        listeners.forEach((element) {
+          element.onDownloadProgress(s);
+        })
+      },
     };
 
     _eventChannel.receiveBroadcastStream().listen((data) {
+      print("_eventChannel");
       print(data);
-      map[data["type"]]?.call(M3U8Task.fromJson(data["data"]));
+      map[data["type"]]?.call(M3U8Task.fromJson(json.decode(data["data"])));
     });
   }
 
@@ -85,33 +94,33 @@ class M3u8download {
   }
 
   static cancel(String url) {
-    _channel.invokeMethod('cancel', {"url": url });
+    _channel.invokeMethod('cancel', {"url": url});
   }
 
   static download(String url) {
-    _channel.invokeMethod('download', {"url": url });
+    _channel.invokeMethod('download', {"url": url});
   }
 
   static pause(String url) {
-    _channel.invokeMethod('pause', {"url": url });
+    _channel.invokeMethod('pause', {"url": url});
   }
 
   static getM3U8Path(String url) {
-    _channel.invokeMethod('getM3U8Path', {"url": url });
+    _channel.invokeMethod('getM3U8Path', {"url": url});
   }
 
   static checkM3U8IsExist(String url) {
-    _channel.invokeMethod('checkM3U8IsExist', {"url": url });
+    _channel.invokeMethod('checkM3U8IsExist', {"url": url});
   }
 
   static Future<bool> isCurrentTask(String url) async {
     final bool isCurrentTask =
-        await _channel.invokeMethod('isCurrentTask', {"url": url });
+    await _channel.invokeMethod('isCurrentTask', {"url": url});
     return isCurrentTask;
   }
 
   static setEncryptKey(String encryptKey) {
-    _channel.invokeMethod('setEncryptKey', {"encryptKey": encryptKey });
+    _channel.invokeMethod('setEncryptKey', {"encryptKey": encryptKey});
   }
 
   static Future<String> getEncryptKey() async {
@@ -120,7 +129,7 @@ class M3u8download {
   }
 
   static cancelAndDelete(String url) {
-    _channel.invokeMethod('cancelAndDelete', {"url": url });
+    _channel.invokeMethod('cancelAndDelete', {"url": url});
   }
 }
 

@@ -1,6 +1,8 @@
 package com.echo.m3u8download
 
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import androidx.annotation.NonNull
 import com.google.gson.Gson
 import io.flutter.embedding.engine.plugins.FlutterPlugin
@@ -83,7 +85,8 @@ public class M3u8downloadPlugin : FlutterPlugin, MethodCallHandler {
 
         var theEvents: EventChannel.EventSink? = null
 
-        fun init(context: Context){
+        fun  init(context: Context){
+            var handler=Handler(Looper.getMainLooper())
             var dirPath = StorageUtils.getCacheDirectory(context).path.toString() + "/m3u8Downloader"
             M3U8DownloaderConfig
                     .build(context.applicationContext)
@@ -92,17 +95,18 @@ public class M3u8downloadPlugin : FlutterPlugin, MethodCallHandler {
             M3U8Downloader.getInstance().setOnM3U8DownloadListener(object : OnM3U8DownloadListener() {
                 override fun onDownloadPause(task: M3U8Task?) {
                     super.onDownloadPause(task)
-                    theEvents?.success(buildResult("onDownloadPause", task))
+                     handler.post {theEvents?.success(buildResult("onDownloadPause", task))}
+
                 }
 
                 override fun onDownloadError(task: M3U8Task?, errorMsg: Throwable?) {
                     super.onDownloadError(task, errorMsg)
-                    theEvents?.success(buildResult("onDownloadError", task))
+                    handler.post {theEvents?.success(buildResult("onDownloadError", task))}
                 }
 
                 override fun onDownloadPrepare(task: M3U8Task?) {
                     super.onDownloadPrepare(task)
-                    theEvents?.success(buildResult("onDownloadPrepare", task))
+                    handler.post {theEvents?.success(buildResult("onDownloadPrepare", task))}
                 }
 
                 override fun onDownloadItem(task: M3U8Task?, itemFileSize: Long, totalTs: Int, curTs: Int) {
@@ -111,22 +115,22 @@ public class M3u8downloadPlugin : FlutterPlugin, MethodCallHandler {
                     my.itemFileSize = itemFileSize.toString()
                     my.totalTs = totalTs.toString()
                     my.curTs = curTs.toString()
-                    theEvents?.success(buildResult("onDownloadItem", Gson().toJson(my)))
+                    handler.post {theEvents?.success(buildResult("onDownloadItem", Gson().toJson(my)))}
                 }
 
                 override fun onDownloadSuccess(task: M3U8Task?) {
                     super.onDownloadSuccess(task)
-                    theEvents?.success(buildResult("onDownloadSuccess", task))
+                    handler.post { theEvents?.success(buildResult("onDownloadSuccess", task))}
                 }
 
                 override fun onDownloadPending(task: M3U8Task?) {
                     super.onDownloadPending(task)
-                    theEvents?.success(buildResult("onDownloadPending", task))
+                    handler.post { theEvents?.success(buildResult("onDownloadPending", task))}
                 }
 
                 override fun onDownloadProgress(task: M3U8Task?) {
                     super.onDownloadProgress(task)
-                    theEvents?.success(buildResult("onDownloadProgress", task))
+                    handler.post {  theEvents?.success(buildResult("onDownloadProgress", task))}
                 }
             })
 

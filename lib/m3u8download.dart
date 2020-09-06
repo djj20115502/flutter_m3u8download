@@ -127,6 +127,22 @@ class M3u8download {
   static cancelAndDelete(String url) {
     _channel.invokeMethod('cancelAndDelete', {"url": url});
   }
+
+  static encrypt() {
+    _channel.invokeMethod('encrypt');
+  }
+
+  static decrypt() {
+    _channel.invokeMethod('decrypt');
+  }
+
+  static finish() {
+    _channel.invokeMethod('finish');
+  }
+
+  static execute() {
+    _channel.invokeMethod('execute');
+  }
 }
 
 abstract class M3u8downloadListener {

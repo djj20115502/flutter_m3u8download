@@ -16,6 +16,7 @@ import jaygoo.library.m3u8downloader.M3U8Downloader
 import jaygoo.library.m3u8downloader.M3U8DownloaderConfig
 import jaygoo.library.m3u8downloader.OnM3U8DownloadListener
 import jaygoo.library.m3u8downloader.bean.M3U8Task
+import jaygoo.library.m3u8downloader.server.EncryptM3U8Server
 import m3u8download.MyM3u8
 
 /** M3u8downloadPlugin */
@@ -85,8 +86,8 @@ public class M3u8downloadPlugin : FlutterPlugin, MethodCallHandler {
 
         var theEvents: EventChannel.EventSink? = null
 
-        fun  init(context: Context){
-            var handler=Handler(Looper.getMainLooper())
+        fun init(context: Context) {
+            var handler = Handler(Looper.getMainLooper())
             var dirPath = StorageUtils.getCacheDirectory(context).path.toString() + "/m3u8Downloader"
             M3U8DownloaderConfig
                     .build(context.applicationContext)
@@ -95,18 +96,18 @@ public class M3u8downloadPlugin : FlutterPlugin, MethodCallHandler {
             M3U8Downloader.getInstance().setOnM3U8DownloadListener(object : OnM3U8DownloadListener() {
                 override fun onDownloadPause(task: M3U8Task?) {
                     super.onDownloadPause(task)
-                     handler.post {theEvents?.success(buildResult("onDownloadPause", task))}
+                    handler.post { theEvents?.success(buildResult("onDownloadPause", task)) }
 
                 }
 
                 override fun onDownloadError(task: M3U8Task?, errorMsg: Throwable?) {
                     super.onDownloadError(task, errorMsg)
-                    handler.post {theEvents?.success(buildResult("onDownloadError", task))}
+                    handler.post { theEvents?.success(buildResult("onDownloadError", task)) }
                 }
 
                 override fun onDownloadPrepare(task: M3U8Task?) {
                     super.onDownloadPrepare(task)
-                    handler.post {theEvents?.success(buildResult("onDownloadPrepare", task))}
+                    handler.post { theEvents?.success(buildResult("onDownloadPrepare", task)) }
                 }
 
                 override fun onDownloadItem(task: M3U8Task?, itemFileSize: Long, totalTs: Int, curTs: Int) {
@@ -115,29 +116,29 @@ public class M3u8downloadPlugin : FlutterPlugin, MethodCallHandler {
                     my.itemFileSize = itemFileSize.toString()
                     my.totalTs = totalTs.toString()
                     my.curTs = curTs.toString()
-                    handler.post {theEvents?.success(buildResult("onDownloadItem", Gson().toJson(my)))}
+                    handler.post { theEvents?.success(buildResult("onDownloadItem", Gson().toJson(my))) }
                 }
 
                 override fun onDownloadSuccess(task: M3U8Task?) {
                     super.onDownloadSuccess(task)
-                    handler.post { theEvents?.success(buildResult("onDownloadSuccess", task))}
+                    handler.post { theEvents?.success(buildResult("onDownloadSuccess", task)) }
                 }
 
                 override fun onDownloadPending(task: M3U8Task?) {
                     super.onDownloadPending(task)
-                    handler.post { theEvents?.success(buildResult("onDownloadPending", task))}
+                    handler.post { theEvents?.success(buildResult("onDownloadPending", task)) }
                 }
 
                 override fun onDownloadProgress(task: M3U8Task?) {
                     super.onDownloadProgress(task)
-                    handler.post {  theEvents?.success(buildResult("onDownloadProgress", task))}
+                    handler.post { theEvents?.success(buildResult("onDownloadProgress", task)) }
                 }
             })
 
         }
     }
 
-
+    private val m3u8Server = EncryptM3U8Server();
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
         if (call.method == "getPlatformVersion") {
 //            result.success("Android ${android.os.Build.VERSION.RELEASE}")
@@ -157,6 +158,7 @@ public class M3u8downloadPlugin : FlutterPlugin, MethodCallHandler {
                 M3U8Downloader.getInstance().checkM3U8IsExist(call.argument<String>("url"))
             }
             "getM3U8Path" -> {
+                android.util.Log.e("M3U8Downloader", M3U8Downloader.getInstance().getM3U8Path(call.argument<String>("url")))
                 result.success(M3U8Downloader.getInstance().getM3U8Path(call.argument<String>("url")))
             }
             "isCurrentTask" -> {
@@ -170,6 +172,18 @@ public class M3u8downloadPlugin : FlutterPlugin, MethodCallHandler {
             }
             "cancelAndDelete" -> {
                 M3U8Downloader.getInstance().cancelAndDelete(call.argument<String>("url"), null)
+            }
+            "encrypt" -> {
+                m3u8Server.encrypt()
+            }
+            "decrypt" -> {
+                m3u8Server.decrypt()
+            }
+            "finish" -> {
+                m3u8Server.finish()
+            }
+            "execute" -> {
+                m3u8Server.execute()
             }
         }
     }

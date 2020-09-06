@@ -155,7 +155,7 @@ public class M3u8downloadPlugin : FlutterPlugin, MethodCallHandler {
                 M3U8Downloader.getInstance().pause(call.argument<String>("url"))
             }
             "checkM3U8IsExist" -> {
-                M3U8Downloader.getInstance().checkM3U8IsExist(call.argument<String>("url"))
+                result.success(M3U8Downloader.getInstance().checkM3U8IsExist(call.argument<String>("url")))
             }
             "getM3U8Path" -> {
                 android.util.Log.e("M3U8Downloader", M3U8Downloader.getInstance().getM3U8Path(call.argument<String>("url")))

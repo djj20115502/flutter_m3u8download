@@ -147,7 +147,6 @@ public class M3u8downloadPlugin : FlutterPlugin, MethodCallHandler {
             "cancel" -> {
                 M3U8Downloader.getInstance().cancel(call.argument<String>("url"))
             }
-
             "download" -> {
                 M3U8Downloader.getInstance().download(call.argument<String>("url"))
             }
@@ -158,7 +157,7 @@ public class M3u8downloadPlugin : FlutterPlugin, MethodCallHandler {
                 M3U8Downloader.getInstance().checkM3U8IsExist(call.argument<String>("url"))
             }
             "getM3U8Path" -> {
-                M3U8Downloader.getInstance().getM3U8Path(call.argument<String>("url"))
+                result.success(M3U8Downloader.getInstance().getM3U8Path(call.argument<String>("url")))
             }
             "isCurrentTask" -> {
                 result.success(M3U8Downloader.getInstance().isCurrentTask(call.argument<String>("url")))

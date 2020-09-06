@@ -9,7 +9,7 @@ import 'data.dart';
 class M3u8download {
   static const MethodChannel _channel = const MethodChannel('m3u8download');
   static const EventChannel _eventChannel =
-  const EventChannel("m3u8download_event");
+      const EventChannel("m3u8download_event");
 
   static Future<String> get platformVersion async {
     final String version = await _channel.invokeMethod('getPlatformVersion');
@@ -29,48 +29,41 @@ class M3u8download {
 
   static eventChannelDistribution() {
     Map<String, ValueChanged<M3U8Task>> map = {
-      "onDownloadPause": (s) =>
-      {
-        listeners.forEach((element) {
-          element.onDownloadPause(s);
-        })
-      },
-      "onDownloadError": (s) =>
-      {
-        listeners.forEach((element) {
-          element.onDownloadError(s);
-        })
-      },
-      "onDownloadPrepare": (s) =>
-      {
-        listeners.forEach((element) {
-          element.onDownloadPrepare(s);
-        })
-      },
-      "onDownloadItem": (s) =>
-      {
-        listeners.forEach((element) {
-          element.onDownloadItem(s);
-        })
-      },
-      "onDownloadSuccess": (s) =>
-      {
-        listeners.forEach((element) {
-          element.onDownloadSuccess(s);
-        })
-      },
-      "onDownloadPending": (s) =>
-      {
-        listeners.forEach((element) {
-          element.onDownloadPending(s);
-        })
-      },
-      "onDownloadProgress": (s) =>
-      {
-        listeners.forEach((element) {
-          element.onDownloadProgress(s);
-        })
-      },
+      "onDownloadPause": (s) => {
+            listeners.forEach((element) {
+              element.onDownloadPause(s);
+            })
+          },
+      "onDownloadError": (s) => {
+            listeners.forEach((element) {
+              element.onDownloadError(s);
+            })
+          },
+      "onDownloadPrepare": (s) => {
+            listeners.forEach((element) {
+              element.onDownloadPrepare(s);
+            })
+          },
+      "onDownloadItem": (s) => {
+            listeners.forEach((element) {
+              element.onDownloadItem(s);
+            })
+          },
+      "onDownloadSuccess": (s) => {
+            listeners.forEach((element) {
+              element.onDownloadSuccess(s);
+            })
+          },
+      "onDownloadPending": (s) => {
+            listeners.forEach((element) {
+              element.onDownloadPending(s);
+            })
+          },
+      "onDownloadProgress": (s) => {
+            listeners.forEach((element) {
+              element.onDownloadProgress(s);
+            })
+          },
     };
 
     _eventChannel.receiveBroadcastStream().listen((data) {
@@ -105,17 +98,20 @@ class M3u8download {
     _channel.invokeMethod('pause', {"url": url});
   }
 
-  static getM3U8Path(String url) {
-    _channel.invokeMethod('getM3U8Path', {"url": url});
+  static Future<String> getM3U8Path(String url) async {
+    var path = await _channel.invokeMethod('getM3U8Path', {"url": url});
+    return path;
   }
 
-  static checkM3U8IsExist(String url) {
-    _channel.invokeMethod('checkM3U8IsExist', {"url": url});
+  static Future<bool> checkM3U8IsExist(String url) async {
+    final bool exist =
+        await _channel.invokeMethod('checkM3U8IsExist', {"url": url});
+    return exist;
   }
 
   static Future<bool> isCurrentTask(String url) async {
     final bool isCurrentTask =
-    await _channel.invokeMethod('isCurrentTask', {"url": url});
+        await _channel.invokeMethod('isCurrentTask', {"url": url});
     return isCurrentTask;
   }
 

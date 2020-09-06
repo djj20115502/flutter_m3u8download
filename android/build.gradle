@@ -41,8 +41,8 @@ android {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'com.github.Jay-Goo:M3U8Downloader:V1.0.8'
-
+    implementation 'com.github.djj20115502:M3U8Downloader:2.0'
     implementation 'com.google.code.gson:gson:2.8.5'
+    implementation 'com.github.NanoHttpd.nanohttpd:nanohttpd:master'
 
 }

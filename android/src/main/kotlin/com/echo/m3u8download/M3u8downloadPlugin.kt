@@ -188,7 +188,7 @@ public class M3u8downloadPlugin : FlutterPlugin, MethodCallHandler {
                 result.success(M3U8Downloader.getInstance().encryptKey)
             }
             "getFileSize" -> {
-                result.success(MUtils.formatFileSize(call.argument<Int>("size")))
+                result.success(MUtils.formatFileSize(call.argument<Long>("size")))
             }
             "cancelAndDelete" -> {
                 M3U8Downloader.getInstance().cancelAndDelete(call.argument<String>("url"), null)

@@ -189,7 +189,7 @@ public class M3u8downloadPlugin : FlutterPlugin, MethodCallHandler {
             }
 
             "getFileSize" -> {
-                result.success(MUtils.formatFileSize((call.argument<Int>("size").toLong())))
+                result.success(MUtils.formatFileSize((call.argument<String>("size"))))
             }
             "cancelAndDelete" -> {
                 M3U8Downloader.getInstance().cancelAndDelete(call.argument<String>("url"), null)

@@ -123,6 +123,10 @@ class M3u8download {
     final String encryptKey = await _channel.invokeMethod('getEncryptKey');
     return encryptKey;
   }
+  static Future<String> getFileSize(int size) async {
+    final String size = await _channel.invokeMethod('getFileSize', {"size": size});
+    return size;
+  }
 
   static cancelAndDelete(String url) {
     _channel.invokeMethod('cancelAndDelete', {"url": url});

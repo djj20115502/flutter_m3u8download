@@ -18,6 +18,7 @@ import jaygoo.library.m3u8downloader.M3U8DownloaderConfig
 import jaygoo.library.m3u8downloader.OnM3U8DownloadListener
 import jaygoo.library.m3u8downloader.bean.M3U8Task
 import jaygoo.library.m3u8downloader.server.EncryptM3U8Server
+import jaygoo.library.m3u8downloader.utils.MUtils
 import m3u8download.MyM3u8
 
 /** M3u8downloadPlugin */
@@ -185,6 +186,9 @@ public class M3u8downloadPlugin : FlutterPlugin, MethodCallHandler {
             }
             "getEncryptKey" -> {
                 result.success(M3U8Downloader.getInstance().encryptKey)
+            }
+            "getFileSize" -> {
+                result.success(MUtils.formatFileSize(call.argument<Int>("size")))
             }
             "cancelAndDelete" -> {
                 M3U8Downloader.getInstance().cancelAndDelete(call.argument<String>("url"), null)

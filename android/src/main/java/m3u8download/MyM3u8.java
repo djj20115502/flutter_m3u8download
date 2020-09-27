@@ -34,6 +34,8 @@ public class MyM3u8 {
     public String totalTs;
     @SerializedName("curTs")
     public String curTs;
+    @SerializedName("allSize")
+    public String allSize;
 
     public static MyM3u8 build(M3U8Task m3U8Task) {
         MyM3u8 myM3u8 = new MyM3u8();
@@ -44,6 +46,7 @@ public class MyM3u8 {
         if (m3U8Task.getM3U8() != null) {
             myM3u8.m3u8FilePath = m3U8Task.getM3U8().getM3u8FilePath();
         }
+        myM3u8.allSize = m3U8Task.getFormatTotalSize();
         return myM3u8;
     }
 

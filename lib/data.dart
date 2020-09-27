@@ -27,6 +27,7 @@ class M3U8Task {
   String itemFileSize;
   String totalTs;
   String curTs;
+  String allSize;
 
   M3U8Task({
     this.url,
@@ -48,6 +49,7 @@ class M3U8Task {
     itemFileSize = json['itemFileSize'];
     totalTs = json['totalTs'];
     curTs = json['curTs'];
+    allSize = json['allSize'];
   }
 
   Map<String, dynamic> toJson() {
@@ -60,11 +62,14 @@ class M3U8Task {
     data['itemFileSize'] = this.itemFileSize;
     data['totalTs'] = this.totalTs;
     data['curTs'] = this.curTs;
+    data['allSize'] = this.allSize;
     return data;
   }
 
   @override
   String toString() {
-    return 'M3U8Task{url: $url, state: $state, speed: $speed, progress: $progress, m3u8FilePath: $m3u8FilePath, itemFileSize: $itemFileSize, totalTs: $totalTs, curTs: $curTs}';
+    return 'M3U8Task{url: $url, state: $state, speed: $speed, progress: $progress, m3u8FilePath: $m3u8FilePath, itemFileSize: $itemFileSize, totalTs: $totalTs, curTs: $curTs, allSize: $allSize}';
   }
+
+
 }

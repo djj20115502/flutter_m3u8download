@@ -120,7 +120,7 @@ public class M3u8downloadPlugin : FlutterPlugin, MethodCallHandler {
                 override fun onDownloadItem(task: M3U8Task?, itemFileSize: Long, totalTs: Int, curTs: Int) {
                     super.onDownloadItem(task, itemFileSize, totalTs, curTs)
                     var my = MyM3u8.build(task)
-                    my.itemFileSize = itemFileSize.toString()
+                    my.itemFileSize = task?.m3U8?.formatFileSize
                     my.totalTs = totalTs.toString()
                     my.curTs = curTs.toString()
                     Log.e("M3U8Downloader", "onDownloadItem" + task.toString());
@@ -189,7 +189,12 @@ public class M3u8downloadPlugin : FlutterPlugin, MethodCallHandler {
             }
 
             "getFileSize" -> {
-                result.success(MUtils.formatFileSize((call.argument<String>("size"))))
+                var size = call.argument<String>("size")
+                if (size != null) {
+                    result.success(MUtils.formatFileSize(size.toLong()))
+                } else {
+                    result.success("0")
+                }
             }
             "cancelAndDelete" -> {
                 M3U8Downloader.getInstance().cancelAndDelete(call.argument<String>("url"), null)
